@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1 # or tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: moj-ingest
+  name: moj-ingest-ai
 spec:
   params:
     - name: MILVUS_HOST
@@ -28,8 +28,8 @@ spec:
       name: DROP_COLLECTIONS
       type: string
   steps:
-    - name: ingest-app
-      image: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app:latest"
+    - name: ingest-app-ai
+      image: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app-ai:latest"
       env:
         - name: MILVUS_HOST
           value: $(params.MILVUS_HOST)
