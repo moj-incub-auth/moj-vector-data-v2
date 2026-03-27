@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: ingest-app-build-piperun-
+spec:
+  pipelineRef:
+    name: build-app-pipeline
+  serviceAccountName: pipeline 
+  params:
+    # the URL of the GIT repo containing the source data to ingest
+    - name: GIT_URL
+      value: "https://github.com/moj-incub-auth/moj-vector-data.git"
+    - name: GIT_BRANCH
+      value: "main"
+    - name: IMAGE_REFERENCE
+      value: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app:latest"
+    - name: CONTAINERFILE
+      value: "./Containerfile.ingest-app"
+  workspaces:
+    - name: shared-data
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 40Gi
+    - name: docker-credentials  
+      secret:
+        secretName: pipeline-pull-push-auth
+        items:
+          - key: .dockerconfigjson
+            path: config.json

@@ -1,0 +1,21 @@
+[project]
+name = "moj-vector-data"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+
+[tool.uv.workspace]
+members = [
+    "packages/milvus-lib",
+    "packages/ingest-lib",
+    "packages/llm-lib",
+    "apps/ingest-app",
+    "apps/search-app",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "ruff>=0.15.6",
+]

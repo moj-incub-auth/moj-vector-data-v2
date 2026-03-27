@@ -1,0 +1,104 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: ingest-resources-pipeline
+spec:
+  workspaces:
+    - name: shared-data
+  params:
+    - name: MOJ_FRONTEND_GIT_URL
+      type: string
+      default: "https://github.com/ministryofjustice/moj-frontend.git"
+    - name: MOJ_FRONTEND_GIT_BRANCH
+      type: string
+      default: "main"
+    - name: HMRC_FRONTEND_GIT_URL
+      type: string
+      default: "https://github.com/hmrc/hmrc-frontend.git"
+    - name: HMRC_FRONTEND_GIT_BRANCH
+      type: string
+      default: "main"
+    - name: DWP_DESIGN_GIT_URL
+      type: string
+      default: "https://github.com/dwp/design-system.git"
+    - name: DWP_DESIGN_GIT_BRANCH
+      type: string
+      default: "main"
+    - name: MILVUS_HOST
+      type: string
+    - name: DROP_COLLECTIONS
+      type: string
+      default: "False"
+  tasks:
+    - name: fetch-moj-frontend
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: git-clone
+          - name: kind
+            value: task 
+          - name: namespace
+            value: openshift-pipelines # Default location for built-in tasks
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: URL
+          value: $(params.MOJ_FRONTEND_GIT_URL)
+        - name: revision
+          value: $(params.MOJ_FRONTEND_GIT_BRANCH)
+        - name: SUBDIRECTORY
+          value: "moj-frontend"
+    - name: fetch-hmrc-frontend
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: git-clone
+          - name: kind
+            value: task 
+          - name: namespace
+            value: openshift-pipelines # Default location for built-in tasks
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: URL
+          value: $(params.HMRC_FRONTEND_GIT_URL)
+        - name: revision
+          value: $(params.HMRC_FRONTEND_GIT_BRANCH)
+        - name: SUBDIRECTORY
+          value: "hmrc-frontend"
+    - name: fetch-dwp-design
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: git-clone
+          - name: kind
+            value: task 
+          - name: namespace
+            value: openshift-pipelines # Default location for built-in tasks
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: URL
+          value: $(params.DWP_DESIGN_GIT_URL)
+        - name: revision
+          value: $(params.DWP_DESIGN_GIT_BRANCH)
+        - name: SUBDIRECTORY
+          value: "design-system"
+    - name: ingest-resources
+      taskRef:
+        name: moj-ingest
+      runAfter: ["fetch-moj-frontend", "fetch-hmrc-frontend", "fetch-dwp-design"]
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: MILVUS_HOST
+          value: $(params.MILVUS_HOST)
+        - name: DROP_COLLECTIONS
+          value: $(params.DROP_COLLECTIONS)

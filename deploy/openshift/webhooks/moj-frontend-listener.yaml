@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: moj-frontend-listener
+spec:
+  triggers:
+    - bindings:
+        - ref: git-repo-binding
+      template:
+        ref: moj-frontend-template

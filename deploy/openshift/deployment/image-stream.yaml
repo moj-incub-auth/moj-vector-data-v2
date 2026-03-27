@@ -1,0 +1,10 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: search-app
+  namespace: moj-vector-data
+  labels:
+    app: moj-search-app  
+spec:
+  lookupPolicy:
+    local: false

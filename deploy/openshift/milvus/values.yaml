@@ -1,0 +1,27 @@
+cluster:
+  enabled: false
+etcd:
+  replicaCount: 1
+pulsarv3:
+  enabled: false
+redis:
+  enabled: false
+minio:
+  mode: standalone
+extraConfigFiles:
+  user.yaml: |+
+    credential:
+      openai_key:
+        apikey: empty
+    function:
+      textEmbedding:
+        providers:
+          openai:
+            url: http://qwen3-embedding-predictor.vllm-serving.svc.cluster.local/v1/embeddings
+            credential: openai_key
+standalone:
+  resources:
+    requests:
+      memory: 8Gi
+    limits:
+      memory: 12Gi

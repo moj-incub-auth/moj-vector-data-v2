@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: ingest-resources-piperun-
+spec:
+  pipelineRef:
+    name: ingest-resources-pipeline
+  serviceAccountName: pipeline 
+  params:
+    - name: MILVUS_HOST
+      value: "moj-milvus.moj-vector-data.svc.cluster.local"
+    - name: DROP_COLLECTIONS
+      value: "True"
+  workspaces:
+    - name: shared-data
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 40Gi

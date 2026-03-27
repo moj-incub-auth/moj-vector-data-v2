@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: ingestion-app-listener
+spec:
+  triggers:
+    - bindings:
+        - ref: git-repo-binding
+      template:
+        ref: ingestion-app-template

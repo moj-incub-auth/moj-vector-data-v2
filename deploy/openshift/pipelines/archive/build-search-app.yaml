@@ -1,0 +1,61 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: build-search-app-pipeline
+spec:
+  workspaces:
+    - name: shared-data
+  params:
+    - name: GIT_URL
+      type: string
+      default: "https://github.com/moj-incub-auth/moj-vector-data.git"
+    - name: GIT_BRANCH
+      type: string
+      default: "main"
+    - name: IMAGE_REFERENCE
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/search-app:latest"
+  tasks:
+    - name: fetch-source
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: git-clone
+          - name: kind
+            value: task 
+          - name: namespace
+            value: openshift-pipelines # Default location for built-in tasks
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: URL
+          value: $(params.GIT_URL)
+        - name: revision
+          value: $(params.GIT_BRANCH)
+    - name: build-image
+      runAfter: ["fetch-source"]
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: buildah
+          - name: kind
+            value: task
+          - name: namespace
+            value: openshift-pipelines
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: DOCKERFILE
+          value: "./Containerfile.search-app"
+        - name: IMAGE
+          value: $(params.IMAGE_REFERENCE)
+        - name: TLSVERIFY
+          value: "false"
+        - name: BUILD_EXTRA_ARGS
+          value: >-
+            --build-arg GIT_REF=$(tasks.fetch-source.results.COMMIT)
+            --build-arg GIT_BRANCH=$(params.GIT_BRANCH)    

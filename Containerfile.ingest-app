@@ -1,0 +1,54 @@
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+
+# Omit development dependencies
+ENV UV_NO_DEV=1
+
+# Disable Python downloads, because we want to use the system interpreter
+# across both images. If using a managed Python version, it needs to be
+# copied from the build image into the final image; see `standalone.Dockerfile`
+# for an example.
+ENV UV_PYTHON_DOWNLOADS=0
+
+WORKDIR /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=packages/ingest-lib/pyproject.toml,target=packages/ingest-lib/pyproject.toml \
+    --mount=type=bind,source=packages/milvus-lib/pyproject.toml,target=packages/milvus-lib/pyproject.toml \
+    --mount=type=bind,source=apps/search-app/pyproject.toml,target=apps/search-app/pyproject.toml \
+    --mount=type=bind,source=apps/ingest-app/pyproject.toml,target=apps/ingest-app/pyproject.toml \
+    uv sync --locked --no-install-local --package ingest-app
+COPY --exclude=apps/search-app/src . /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --package ingest-app
+
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
+# It is important to use the image that matches the builder, as the path to the
+# Python executable must be the same, e.g., using `python:3.11-slim-bookworm`
+# will fail.
+
+# Omit development dependencies
+ENV UV_NO_DEV=1 UV_PYTHON_DOWNLOADS=0
+
+# Setup a non-root user
+RUN apt update && apt install -y git \
+ && groupadd --system --gid 999 nonroot \
+ && useradd --system --gid 999 --uid 999 --create-home nonroot
+
+# Copy the application from the builder
+COPY --from=builder --chown=nonroot:nonroot /app /app
+
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Use the non-root user to run our application
+USER nonroot
+
+RUN git config --global --add safe.directory '*'
+
+# Use `/app` as the working directory
+WORKDIR /app
+
+# Run the FastAPI application by default
+CMD ["uv", "run", "ingest-app", "ingest"]

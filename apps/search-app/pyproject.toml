@@ -1,0 +1,26 @@
+[project]
+name = "search-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Adam Baxter", email = "ambaxter@github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "milvus-lib",
+    "fastapi[standard]>=0.135.1",
+    "fastapi-health>=0.4.0",
+    "prometheus-fastapi-instrumentator>=7.1.0",
+
+]
+
+[project.scripts]
+search-app = "search_app:main"
+
+[build-system]
+requires = ["uv_build>=0.10.10,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+milvus-lib = { workspace = true }

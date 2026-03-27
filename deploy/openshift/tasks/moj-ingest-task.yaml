@@ -1,0 +1,53 @@
+apiVersion: tekton.dev/v1 # or tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: moj-ingest
+spec:
+  params:
+    - name: MILVUS_HOST
+      type: string
+    - default: '19530'
+      name: MILVUS_PORT
+      type: string
+    - default: 1024
+      name: MILVUS_EMBEDDING_DIM
+      type: string
+    - default: 2
+      name: MILVUS_MAX_BATCH_SIZE
+      type: string
+    - name: MILVUS_COLLECTION_NAME
+      default: knowledge_base
+      type: string
+    - default: qwen3-embedding
+      name: MILVUS_EMBEDDING_MODEL
+      type: string
+    - default: /source
+      name: INGEST_DIR
+      type: string
+    - default: False
+      name: DROP_COLLECTIONS
+      type: string
+  steps:
+    - name: ingest-app
+      image: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app:latest"
+      env:
+        - name: MILVUS_HOST
+          value: $(params.MILVUS_HOST)
+        - name: MILVUS_PORT
+          value: $(params.MILVUS_PORT)
+        - name: MILVUS_EMBEDDING_DIM
+          value: $(params.MILVUS_EMBEDDING_DIM)
+        - name: MILVUS_MAX_BATCH_SIZE
+          value: $(params.MILVUS_MAX_BATCH_SIZE)
+        - name: MILVUS_COLLECTION_NAME
+          value: $(params.MILVUS_COLLECTION_NAME)
+        - name: MILVUS_EMBEDDING_MODEL
+          value: $(params.MILVUS_EMBEDDING_MODEL)
+        - name: INGEST_DIR
+          value: $(params.INGEST_DIR)
+        - name: DROP_COLLECTIONS
+          value: $(params.DROP_COLLECTIONS)
+  workspaces:
+    - name: source
+      description: Project source code
+      mountPath: /source

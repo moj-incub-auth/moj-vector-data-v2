@@ -1,0 +1,6 @@
+include:
+  - docker-compose.yaml
+
+services:
+  text-embeddings-inference:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-ipex-latest     

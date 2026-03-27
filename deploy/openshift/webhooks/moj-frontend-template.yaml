@@ -1,0 +1,35 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: moj-frontend-template
+spec:
+  params:
+    - name: gitrevision
+    - name: gitrepositoryurl
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: webhook-ingest-moj-frontend-piperun-
+      spec:
+          pipelineRef: 
+            name: ingest-content-pipeline
+          params:
+            # the URL of the GIT repo containing the source data to ingest
+            - name: RESOURCE_GIT_URL
+              value: "https://github.com/moj-incub-auth/moj-frontend.git"
+            - name: RESOURCE_GIT_BRANCH
+              value: "main"
+            - name: MILVUS_HOST
+              value: "moj-milvus.moj-vector-data.svc.cluster.local"
+            - name: RESOURCE_SUBDIRECTORY
+              value: "moj-frontend"
+          workspaces:
+            - name: shared-data
+              volumeClaimTemplate:
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 40Gi

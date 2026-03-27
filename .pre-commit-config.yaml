@@ -1,0 +1,15 @@
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.15.6
+  hooks:
+    # Run the linter.
+    - id: ruff-check
+      name: Ruff Linter
+    # Organize imports
+    - id: ruff-check
+      name: Organize Imports
+      args: ["--select", "I", "--fix"]
+    # Format code
+    - id: ruff-format
+      name: Format Code

@@ -1,0 +1,62 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: ingest-content-pipeline
+spec:
+  workspaces:
+    - name: shared-data
+  params:
+    - name: RESOURCE_GIT_URL
+      type: string
+      default: "https://github.com/ministryofjustice/moj-frontend.git"
+    - name: RESOURCE_GIT_BRANCH
+      type: string
+      default: "main"
+    - name: RESOURCE_SUBDIRECTORY
+      type: string
+      default: "moj-frontend"
+    # zero(0) = full clone
+    # one(1) = swallow clone
+    - name: GIT_CLONE_DEPTH  
+      type: string
+      default: 0
+    - name: MILVUS_HOST
+      type: string
+    - name: DROP_COLLECTIONS
+      type: string
+      default: "False"
+  tasks:
+    - name: fetch-content-repo
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: git-clone
+          - name: kind
+            value: task 
+          - name: namespace
+            value: openshift-pipelines # Default location for built-in tasks
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: URL
+          value: $(params.RESOURCE_GIT_URL)
+        - name: revision
+          value: $(params.RESOURCE_GIT_BRANCH)
+        - name: DEPTH
+          value: $(params.GIT_CLONE_DEPTH)
+        - name: SUBDIRECTORY
+          value: $(params.RESOURCE_SUBDIRECTORY)
+    - name: ingest-resources
+      taskRef:
+        name: moj-ingest
+      runAfter: ["fetch-content-repo"]
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: MILVUS_HOST
+          value: $(params.MILVUS_HOST)
+        - name: DROP_COLLECTIONS
+          value: $(params.DROP_COLLECTIONS)

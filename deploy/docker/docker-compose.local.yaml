@@ -1,0 +1,6 @@
+include:
+  - docker-compose.yaml
+
+services:
+  text-embeddings-inference:
+    image: localhost/text-embeddings-inference:latest

@@ -1,0 +1,27 @@
+[project]
+name = "ingest-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Adam Baxter", email = "ambaxter@github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "configargparse>=1.7.5",
+    "ingest-lib",
+    "milvus-lib",
+    "llm-lib",
+]
+
+[project.scripts]
+ingest-app = "ingest_app:main"
+
+[build-system]
+requires = ["uv_build>=0.10.10,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+milvus-lib = { workspace = true }
+ingest-lib = { workspace = true }
+llm-lib = { workspace = true }
