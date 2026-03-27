@@ -1,6 +1,6 @@
-# MOJ Vector Data
+# MOJ Vector Data v2
 
-Vector search and ingestion for the MOJ Design System. Uses Milvus for embedding storage and semantic search.
+Vector search and ingestion for the MOJ Design System. Uses QWEN3-14B to ingest via Prompt and Milvus for embedding storage and semantic search.
 
 ## Setup
 
