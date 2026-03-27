@@ -39,6 +39,7 @@ Execute:
 
 ```bash
 docker-compose up
+# Linux docker-compose -f docker-compose.cpu-ipex.yaml up/down
 ```
 
 4. Verify `milvus` is running by connecting to [http://0.0.0.0:9091/webui](http://0.0.0.0:9091/webui)

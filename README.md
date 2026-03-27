@@ -10,23 +10,24 @@ uv sync --all-packages --all-extras --all-groups
 
 ## Packages (libraries)
 
-| Package       | Description                                 |
-|---------------|---------------------------------------------|
-| `milvus-lib`  | Milvus client, schema, and search utilities |
-| `ingest-lib`  | Component extraction from moj-frontend docs |
+| Package       | Description                                      |
+|---------------|--------------------------------------------------|
+| `milvus-lib`  | Milvus client, schema, and search utilities      |
+| `ingest-lib`  | Component extraction from government design docs |
+| `llm-lib`     | Component extraction from government design docs using an llm and prompt per system |
 
 ## Apps
 
 | App           | Description                                  |
 |---------------|----------------------------------------------|
 | `search-app`  | FastAPI vector search API                    |
-| `ingest-app`  | CLI for ingesting components into Milvus    |
+| `ingest-app`  | CLI for ingesting components into Milvus     |
 
 ## Usage
 
 ### ingest-app
 
-CLI with two subcommands. Requires `uv sync` from the project root.
+CLI with 3 subcommands. Requires `uv sync` from the project root.
 
 ```bash
 # Ingest moj-frontend components (expects ingest/moj-frontend/)
@@ -56,6 +57,25 @@ uv run fastapi dev -e search_app:app
 ```
 
 Requires a running Milvus instance (see `MILVUS_HOST`, `MILVUS_PORT` env vars).
+
+
+### ingest-app-ai
+
+```bash
+# Ingest moj-frontend components (expects ingest/moj-frontend/)
+uv run ingest-app-ai ingest --ingest-dir <PATH for cloned Repository> --llm-base-url "http://127.0.0.1:8080/v1"
+
+# Ingest and drop existing collection
+uv run ingest-app-ai ingest --ingest-dir <PATH for cloned Repository> --drop --llm-base-url "http://127.0.0.1:8080/v1"
+```
+
+Options (e.g. `--host`, `--port`, `--embedding-model`) are available for both subcommands. See `uv run ingest-app --help`.
+
+### Configuration
+
+Environment Variables see [llm-lib README.md](./packages/llm-lib/README.md)
+
+In [moj-gitops](https://github.com/moj-incub-auth/moj-gitops/tree/main/deployment/base) you will find the *ArgoCD* `Application` CRs whic deploy the [openshift CRs](./deploy/openshift/)
 
 
 ## GuardRails

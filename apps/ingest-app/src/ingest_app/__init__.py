@@ -124,7 +124,7 @@ def main():
     ingest_ai_parser.add_argument(
         "--llm-base-url",
         type=str,
-        default="http://127.0.0.1:8090/v1",
+        default="http://127.0.0.1:8080/v1",
         env_var="OPENAI_BASE_URL",
         help="The LLM Base URL until /v1",
     )

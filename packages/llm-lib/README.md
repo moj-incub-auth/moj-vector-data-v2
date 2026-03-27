@@ -5,7 +5,7 @@ LLM integration library for extracting structured component data from design sys
 ## Features
 
 - **LLM-powered extraction**: Uses qwen3-14b-llm to extract structured data from component files
-- **Rule-based research detection**: Automatically detects research sections with specific criteria
+- **Research detection**: Automatically detects research sections with specific criteria
 - **Pydantic models**: Type-safe data structures for component information
 - **Flexible input**: Extract from files or content strings
 - **JSON output**: Returns structured JSON matching the required format
@@ -49,13 +49,11 @@ CLI with two subcommands. Requires `uv sync` from the project root.
 
 ```bash
 # Ingest moj-frontend components (expects ingest/moj-frontend/)
-uv run ingest-app ingest-ai --ingest-dir ingest
+uv run ingest-app ingest-ai --ingest-dir ingest --llm-base-url "http://127.0.0.1:8080/v1"
 
 # Ingest and drop existing collection
-uv run ingest-app ingest-ai --ingest-dir ingest --drop
+uv run ingest-app ingest-ai --ingest-dir ingest --drop --llm-base-url "http://127.0.0.1:8080/v1"
 
-# Search from the command line
-uv run ingest-app search --search-query "button component"
 ```
 
 Options (e.g. `--host`, `--port`, `--embedding-model`) are available for both subcommands. See `uv run ingest-app --help`.
