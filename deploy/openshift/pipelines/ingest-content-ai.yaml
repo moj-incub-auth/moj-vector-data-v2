@@ -62,3 +62,5 @@ spec:
           value: $(params.MILVUS_HOST)
         - name: DROP_COLLECTIONS
           value: $(params.DROP_COLLECTIONS)
+        - name: OPENAI_BASE_URL
+          value: $(params.OPENAI_BASE_URL)          

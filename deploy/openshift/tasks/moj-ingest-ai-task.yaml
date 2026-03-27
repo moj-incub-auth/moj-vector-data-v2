@@ -27,6 +27,8 @@ spec:
     - default: False
       name: DROP_COLLECTIONS
       type: string
+    - name: OPENAI_BASE_URL
+      type: string      
   steps:
     - name: ingest-app-ai
       image: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app-ai:latest"
@@ -47,6 +49,8 @@ spec:
           value: $(params.INGEST_DIR)
         - name: DROP_COLLECTIONS
           value: $(params.DROP_COLLECTIONS)
+        - name: OPENAI_BASE_URL
+          value: $(params.OPENAI_BASE_URL)          
   workspaces:
     - name: source
       description: Project source code
