@@ -51,4 +51,4 @@ RUN git config --global --add safe.directory '*'
 WORKDIR /app
 
 # Run the FastAPI application by default
-CMD ["uv", "run", "ingest-app", "ingest"]
+CMD ["uv", "run", "ingest-app", "ingest-ai"]
