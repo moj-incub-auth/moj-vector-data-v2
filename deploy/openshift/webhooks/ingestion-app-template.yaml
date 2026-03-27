@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: ingestion-app-template
+  name: ingestion-ai-app-template
 spec:
   params:
     - name: gitrevision
@@ -10,7 +10,7 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: webhook-ingestion-build-piperun-
+        generateName: webhook-ingestion-ai-build-piperun-
       spec:
           pipelineRef: 
             name: build-app-pipeline
@@ -18,13 +18,13 @@ spec:
           params:
             # the URL of the GIT repo containing the source data to ingest
             - name: GIT_URL
-              value: "https://github.com/moj-incub-auth/moj-vector-data.git"
+              value: "https://github.com/moj-incub-auth/moj-vector-data-v2.git"
             - name: GIT_BRANCH
               value: "main"
             - name: IMAGE_REFERENCE
-              value: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app:latest"
+              value: "image-registry.openshift-image-registry.svc:5000/moj-vector-data/ingest-app-ai:latest"
             - name: CONTAINERFILE
-              value: "./Containerfile.ingest-app"
+              value: "./Containerfile.ingest-ai-app"
           workspaces:
             - name: shared-data
               volumeClaimTemplate:

@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: dwp-design-template
+  name: nhs-design-template
 spec:
   params:
     - name: gitrevision
@@ -10,20 +10,20 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: webhook-ingest-dwp-design-piperun-
+        generateName: webhook-ingest-nhs-design-piperun-
       spec:
           pipelineRef: 
-            name: ingest-content-pipeline
+            name: ingest-content-ai-pipeline
           params:
             # the URL of the GIT repo containing the source data to ingest
             - name: RESOURCE_GIT_URL
-              value: "https://github.com/moj-incub-auth/design-system.git"
+              value: "https://github.com/moj-incub-auth/nhsuk-service-manual.git"
             - name: RESOURCE_GIT_BRANCH
               value: "main"
             - name: MILVUS_HOST
               value: "moj-milvus.moj-vector-data.svc.cluster.local"
             - name: RESOURCE_SUBDIRECTORY
-              value: "dwp-design-system"
+              value: "nhsuk-service-manual"
           workspaces:
             - name: shared-data
               volumeClaimTemplate:
