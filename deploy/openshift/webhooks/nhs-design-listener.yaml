@@ -1,10 +1,10 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: dwp-design-listener
+  name: nhs-design-listener
 spec:
   triggers:
     - bindings:
         - ref: git-repo-binding
       template:
-        ref: dwp-design-template
+        ref: nhs-design-template

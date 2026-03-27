@@ -1,0 +1,13 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: el-ingestion-ai-app-listener
+  namespace: moj-builder
+spec:
+  to:
+    kind: Service
+    name: el-ingestion-ai-app-listener
+    weight: 100
+  port:
+    targetPort: http-listener
+  wildcardPolicy: None
