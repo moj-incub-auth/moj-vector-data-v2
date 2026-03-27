@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: ingest-content-pipeline
+  name: ingest-content-ai-pipeline
 spec:
   workspaces:
     - name: shared-data
@@ -50,7 +50,7 @@ spec:
           value: $(params.RESOURCE_SUBDIRECTORY)
     - name: ingest-resources
       taskRef:
-        name: moj-ingest
+        name: moj-ingest-ai
       runAfter: ["fetch-content-repo"]
       workspaces:
         - name: source
