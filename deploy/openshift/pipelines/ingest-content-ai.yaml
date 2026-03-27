@@ -25,6 +25,8 @@ spec:
     - name: DROP_COLLECTIONS
       type: string
       default: "False"
+    - name: OPENAI_BASE_URL
+      type: string
   tasks:
     - name: fetch-content-repo
       taskRef:

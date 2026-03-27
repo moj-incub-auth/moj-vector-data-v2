@@ -24,6 +24,8 @@ spec:
               value: "moj-milvus.moj-vector-data.svc.cluster.local"
             - name: RESOURCE_SUBDIRECTORY
               value: "nhsuk-service-manual"
+            - name: OPENAI_BASE_URL
+              value: "http://qwen3-14b-llm-metrics.vllm-serving.svc.cluster.local:8080/v1"
           workspaces:
             - name: shared-data
               volumeClaimTemplate:
